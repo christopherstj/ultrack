@@ -110,3 +110,6 @@ config
 env.txt
 
 old
+
+.env.development
+.env.development.local
