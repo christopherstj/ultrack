@@ -1,9 +1,9 @@
 {
-    "scripts": {
-        "update-libs": "concurrently \"cd server && npm run update-libs\" \"cd users && npm run update-libs\"",
-        "start:dev": "concurrently \"cd server && npm run start:dev\" \"cd users && npm run start:dev\""
-    },
-    "dependencies": {
-        "concurrently": "^8.0.1"
-    }
+  "scripts": {
+    "update-libs": "concurrently \"cd server && npm run update-libs\" \"cd users && npm run update-libs\" \"cd cloud-storage && npm run update-libs\"",
+    "start:dev": "concurrently \"cd server && npm run start:dev\" \"cd users && npm run start:dev\" \"cd cloud-storage && npm run start:dev\""
+  },
+  "dependencies": {
+    "concurrently": "^8.0.1"
+  }
 }

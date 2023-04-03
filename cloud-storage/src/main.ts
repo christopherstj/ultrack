@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { WinstonModule } from 'nest-winston';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { createLogger, EnvironmentVariables } from '@ultrack/libs';
 import { ConfigService } from '@nestjs/config';
+import { EnvironmentVariables, createLogger } from '@ultrack/libs';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { WinstonModule } from 'nest-winston';
 
 async function bootstrap() {
   const appConfig = await NestFactory.create(AppModule);
@@ -14,13 +14,13 @@ async function bootstrap() {
     {
       transport: Transport.TCP,
       options: {
-        port: 3001,
+        port: 3002,
       },
       logger: WinstonModule.createLogger({
         instance: createLogger(
           configService.get('PROJECT_ID')!,
-          'dev',
-          'microservice-users',
+          configService.get('ENV_TYPE')!,
+          'microservice-cloud-storage',
         ),
       }),
     },

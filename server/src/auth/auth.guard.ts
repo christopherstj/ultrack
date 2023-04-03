@@ -12,7 +12,7 @@ import {
   AuthorizedRequest,
   EnvironmentVariables,
   JwtPayload,
-} from 'src/types/common';
+} from '@ultrack/libs';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

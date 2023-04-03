@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserModule } from './users/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EnvironmentVariables } from './types/common';
+import { EnvironmentVariables } from '@ultrack/libs';
 import { LocalUser } from './users/localUser.entity';
 
 @Module({

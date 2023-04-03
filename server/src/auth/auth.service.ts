@@ -12,22 +12,24 @@ export class AuthService {
   ) {}
 
   async signIn(email: string, pass: string): Promise<any> {
-    const response: { user: any } = await firstValueFrom(
-      this.usersServiceClient.send('find/local-user', { email }),
-    );
+    try {
+      const user = await firstValueFrom(
+        this.usersServiceClient.send({ cmd: 'local/find-one' }, { email }),
+      );
 
-    const { user } = response;
+      if (!user) throw new UnauthorizedException();
 
-    if (!user) throw new UnauthorizedException();
+      const success = await bcrypt.compare(pass, user.hashedPassword);
 
-    const success = await bcrypt.compare(pass, user.hashedPassword);
+      if (!success) throw new UnauthorizedException();
 
-    if (!success) throw new UnauthorizedException();
+      const payload = { email: user.email };
 
-    const payload = { email: user.email };
-
-    return {
-      accessToken: await this.jwtService.signAsync(payload),
-    };
+      return {
+        accessToken: await this.jwtService.signAsync(payload),
+      };
+    } catch (err) {
+      console.error(err);
+    }
   }
 }

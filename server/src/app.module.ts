@@ -1,7 +1,11 @@
 import { Module, Logger } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { UsersController } from './users/users.controller';
+import { CloudStorageController } from './cloud-storage/cloud-storage.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { EnvironmentVariables } from '@ultrack/libs';
 
 @Module({
   imports: [
@@ -9,8 +13,16 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
     AuthModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService<EnvironmentVariables>) => ({
+        secret: configService.get('JWT_SECRET'),
+        signOptions: { expiresIn: '60m' },
+      }),
+      inject: [ConfigService],
+    }),
   ],
-  controllers: [],
+  controllers: [UsersController, CloudStorageController],
   providers: [
     Logger,
     {
@@ -19,6 +31,18 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
         return ClientProxyFactory.create({
           options: {
             port: 3001,
+          },
+          transport: Transport.TCP,
+        });
+      },
+      inject: [],
+    },
+    {
+      provide: 'CLOUD_STORAGE_SERVICE',
+      useFactory: () => {
+        return ClientProxyFactory.create({
+          options: {
+            port: 3002,
           },
           transport: Transport.TCP,
         });

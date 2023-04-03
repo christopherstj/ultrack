@@ -1,10 +1,8 @@
-import { Controller, Get, UseInterceptors } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { LocalUser } from './localUser.entity';
 import { UserService } from './user.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { PubSubInterceptor } from 'nestjs-pubsub-transport';
 
-@UseInterceptors(PubSubInterceptor)
 @Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -18,6 +16,13 @@ export class UserController {
   @MessagePattern('/local/all')
   async findAllAsync(): Promise<LocalUser[]> {
     const result = await this.userService.findAllLocalUsers();
+    return result;
+  }
+
+  @MessagePattern({ cmd: 'local/find-one' })
+  async findLocalUserAsync(@Payload() data: any): Promise<LocalUser> {
+    console.log(data);
+    const result = await this.userService.findLocalUser(data.email);
     return result;
   }
 }

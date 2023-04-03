@@ -14,10 +14,11 @@ export class UserService {
   }
 
   async findLocalUser(email: string): Promise<LocalUser | null> {
-    return this.localUserRepo.findOne({
+    const user = await this.localUserRepo.findOne({
       where: {
         email,
       },
     });
+    return user;
   }
 }
