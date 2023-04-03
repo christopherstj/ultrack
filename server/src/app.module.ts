@@ -1,36 +1,30 @@
 import { Module, Logger } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { EnvironmentVariables } from './types/common';
-import { LocalUser } from './users/localUser.entity';
-import { UserModule } from './users/user.module';
+import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService<EnvironmentVariables>) => ({
-        type: 'mysql',
-        host: configService.get('MYSQL_HOST'),
-        port: 3306,
-        username: configService.get('MYSQL_USER_NAME'),
-        password: configService.get('MYSQL_USER_PASSWORD'),
-        database: configService.get('MYSQL_DB'),
-        entities: [LocalUser],
-        synchronize: process.env.NODE_ENV === 'development',
-      }),
-      inject: [ConfigService],
-    }),
-    UserModule,
     AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, Logger],
+  controllers: [],
+  providers: [
+    Logger,
+    {
+      provide: 'USERS_SERVICE',
+      useFactory: () => {
+        return ClientProxyFactory.create({
+          options: {
+            port: 3001,
+          },
+          transport: Transport.TCP,
+        });
+      },
+      inject: [],
+    },
+  ],
 })
 export class AppModule {}

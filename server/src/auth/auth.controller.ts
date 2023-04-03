@@ -8,7 +8,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { AuthorizedRequest } from 'src/types/common';
+import { AuthorizedRequest } from '@ultrack/libs';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 
