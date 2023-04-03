@@ -1,5 +1,7 @@
 steps:
 - name: gcr.io/cloud-builders/npm
-  args: ['cd', 'libs', '&&', 'run', 'deploy']
+  dir: "libs"
+  entrypoint: npm
+  args: ["run", "deploy"]
 options:
   logging: CLOUD_LOGGING_ONLY
