@@ -17,7 +17,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "update-libs": "npm uninstall @ultrack/libs && npx google-artifactregistry-auth && npm i @ultrack/libs"
   },
   "dependencies": {
     "@google-cloud/logging": "^10.4.0",
@@ -29,7 +30,7 @@
     "@nestjs/microservices": "^9.3.12",
     "@nestjs/platform-express": "^9.3.12",
     "@types/bcryptjs": "^2.4.2",
-    "@ultrack/libs": "^1.0.1",
+    "@ultrack/libs": "^1.0.4",
     "bcryptjs": "^2.4.3",
     "nest-winston": "^1.9.1",
     "reflect-metadata": "^0.1.13",
