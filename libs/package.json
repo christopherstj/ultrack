@@ -1,6 +1,6 @@
 {
     "name": "@ultrack/libs",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Private library for Ultrack",
     "main": "index.ts",
     "scripts": {
