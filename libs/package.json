@@ -1,10 +1,16 @@
 {
     "name": "@ultrack/libs",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "Private library for Ultrack",
-    "main": "index.ts",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "/dist"
+    ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
+        "prep": "npx tsc",
         "deploy": "npx google-artifactregistry-auth && npm publish"
     },
     "keywords": [],
