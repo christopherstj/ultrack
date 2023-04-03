@@ -1,6 +1,9 @@
 steps:
 - name: gcr.io/cloud-builders/npm
   dir: "libs"
+  args: ["install"]
+- name: gcr.io/cloud-builders/npm
+  dir: "libs"
   args: ["run", "prep"]
 - name: gcr.io/cloud-builders/npm
   dir: "libs"
