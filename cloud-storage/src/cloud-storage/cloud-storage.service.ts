@@ -7,8 +7,11 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class CloudStorageService {
   constructor(private configService: ConfigService<EnvironmentVariables>) {}
-  async uploadFile(data: UploadMessageData) {
+  async uploadFile(
+    data: UploadMessageData,
+  ): Promise<{ success: boolean; fileName: string }> {
     try {
+      console.log('uploading data');
       const now = new Date();
 
       const dateTimeString = this.getDateTimeString(now);
@@ -17,7 +20,7 @@ export class CloudStorageService {
         projectId: this.configService.get('PROJECT_ID'),
       });
 
-      const fileName = `${data.user}/${dateTimeString}/${data.file.originalname}.fit`;
+      const fileName = `${data.user}/${dateTimeString}/${data.file.originalname}`;
 
       const file = storage.bucket('dev-fit-file-bucket-f45f695').file(fileName);
 
@@ -30,10 +33,42 @@ export class CloudStorageService {
       };
 
       await file.save(Buffer.from(data.file.buffer), options);
+
+      return { success: true, fileName };
     } catch (err) {
       throw new RpcException('Upload file failed: ' + err);
     }
   }
+
+  async deleteFile(
+    user: string,
+    fileName: string,
+  ): Promise<{ success: boolean }> {
+    try {
+      const storage = new Storage({
+        projectId: this.configService.get('PROJECT_ID'),
+      });
+
+      const fullFileName = `${user}/${fileName}`;
+
+      const file = storage
+        .bucket('dev-fit-file-bucket-f45f695')
+        .file(fullFileName);
+
+      const [exists] = await file.exists();
+
+      if (!exists) throw new RpcException('Invalid file name');
+
+      const [res] = await file.delete();
+
+      if (res.statusCode !== 200) throw new RpcException('Error deleting file');
+
+      return { success: true };
+    } catch (err) {
+      throw new RpcException('Upload file failed: ' + err);
+    }
+  }
+
   getDateTimeString(date: Date) {
     return `${date.getUTCFullYear()}-${
       date.getUTCMonth() < 10 ? `0${date.getUTCMonth()}` : date.getUTCMonth()

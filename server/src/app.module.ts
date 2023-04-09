@@ -49,6 +49,18 @@ import { EnvironmentVariables } from '@ultrack/libs';
       },
       inject: [],
     },
+    {
+      provide: 'FILE_PROCESSOR_SERVICE',
+      useFactory: () => {
+        return ClientProxyFactory.create({
+          options: {
+            port: 3003,
+          },
+          transport: Transport.TCP,
+        });
+      },
+      inject: [],
+    },
   ],
 })
 export class AppModule {}
