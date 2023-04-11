@@ -25,4 +25,5 @@ export interface Lap {
     totalDistance: number;
     totalElapsedTime: number;
     totalTimerTime: number;
+    avgPercentGrade?: number;
 }

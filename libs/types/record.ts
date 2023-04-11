@@ -12,4 +12,5 @@ export interface Record {
     speed?: number;
     stepLength?: number;
     timestamp: Date;
+    percentGrade?: number;
 }
