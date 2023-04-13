@@ -4,7 +4,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
     name: "workouts_workout",
 })
 export class Workout {
-    @PrimaryGeneratedColumn()
+    @Column()
     workoutId: string;
 
     @Column()
