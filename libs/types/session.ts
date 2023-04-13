@@ -1,4 +1,7 @@
 export interface Session {
+    avgCadence: number;
+    avgHeartRate: number;
+    avgRunningCadence: number;
     avgSpeed: number;
     avgStanceTime: number;
     avgStanceTimeBalance: number;
