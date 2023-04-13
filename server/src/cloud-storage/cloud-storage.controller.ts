@@ -6,15 +6,15 @@ import {
   Request,
   UseInterceptors,
   UploadedFile,
-  Response,
   Delete,
   Param,
+  Res,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthorizedRequest, UploadMessageData } from '@ultrack/libs';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Express, Response as ExpressResponse } from 'express';
+import { Express, Response } from 'express';
 import { lastValueFrom } from 'rxjs';
 
 @Controller('file-management')
@@ -30,24 +30,37 @@ export class CloudStorageController {
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Request() req: AuthorizedRequest,
+    @Res() res: Response,
   ) {
     const payload: UploadMessageData = {
       user: req.payload!.email,
       file,
     };
-    const result = this.storageClient.send<{
+    const res1 = this.storageClient.send<{
       success: boolean;
       fileName: string;
     }>('/upload', payload);
 
-    const { success, fileName } = await lastValueFrom(result);
+    const result1 = await lastValueFrom(res1);
 
-    if (success) {
-      this.fileProcessorClient.emit('/file-uploaded', {
+    if (result1.success) {
+      const res2 = this.fileProcessorClient.send<{
+        success: boolean;
+      }>('/file-uploaded', {
         user: req.payload!.email,
-        fileName,
+        fileName: result1.fileName,
         file,
       });
+
+      const result2 = await lastValueFrom(res2);
+
+      if (result2.success) {
+        res.send(result2);
+      } else {
+        res.status(500).send('Error uploading file');
+      }
+    } else {
+      res.status(500).send('Error uploading file');
     }
   }
 
@@ -56,18 +69,31 @@ export class CloudStorageController {
   async deleteFile(
     @Param('fileName') fileName: string,
     @Request() req: AuthorizedRequest,
+    @Res() res: Response,
   ) {
-    const result = this.storageClient.send<{
+    const res1 = this.storageClient.send<{
       success: boolean;
-    }>('/delete', { user: req.payload!.email });
+    }>('/delete', { user: req.payload!.email, fileName });
 
-    const { success } = await lastValueFrom(result);
+    const result1 = await lastValueFrom(res1);
 
-    if (success) {
-      this.fileProcessorClient.emit('/file-deleted', {
+    if (result1.success) {
+      const res2 = this.fileProcessorClient.send<{
+        success: boolean;
+      }>('/file-deleted', {
         user: req.payload!.email,
         fileName,
       });
+
+      const result2 = await lastValueFrom(res2);
+
+      if (result2.success) {
+        res.send(result2);
+      } else {
+        res.status(500).send('Error deleting file');
+      }
+    } else {
+      res.status(500).send('Error deleting file');
     }
   }
 }

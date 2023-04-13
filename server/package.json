@@ -30,7 +30,7 @@
     "@nestjs/microservices": "^9.3.12",
     "@nestjs/platform-express": "^9.3.12",
     "@types/bcryptjs": "^2.4.2",
-    "@ultrack/libs": "^1.0.10",
+    "@ultrack/libs": "^1.0.12",
     "bcryptjs": "^2.4.3",
     "nest-winston": "^1.9.1",
     "reflect-metadata": "^0.1.13",

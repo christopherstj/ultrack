@@ -12,17 +12,14 @@ export class CloudStorageService {
   ): Promise<{ success: boolean; fileName: string }> {
     try {
       console.log('uploading data');
-      const now = new Date();
-
-      const dateTimeString = this.getDateTimeString(now);
 
       const storage = new Storage({
         projectId: this.configService.get('PROJECT_ID'),
       });
 
-      const fileName = `${data.user}/${dateTimeString}/${data.file.originalname}`;
-
-      const file = storage.bucket('dev-fit-file-bucket-f45f695').file(fileName);
+      const file = storage
+        .bucket('dev-fit-file-bucket-f45f695')
+        .file(`${data.user}/${data.file.originalname}`);
 
       const [location] = await file.createResumableUpload();
 
@@ -34,7 +31,7 @@ export class CloudStorageService {
 
       await file.save(Buffer.from(data.file.buffer), options);
 
-      return { success: true, fileName };
+      return { success: true, fileName: data.file.originalname };
     } catch (err) {
       throw new RpcException('Upload file failed: ' + err);
     }
@@ -49,6 +46,8 @@ export class CloudStorageService {
         projectId: this.configService.get('PROJECT_ID'),
       });
 
+      console.log(fileName);
+
       const fullFileName = `${user}/${fileName}`;
 
       const file = storage
@@ -61,7 +60,7 @@ export class CloudStorageService {
 
       const [res] = await file.delete();
 
-      if (res.statusCode !== 200) throw new RpcException('Error deleting file');
+      console.log('file deleted from cloud storage');
 
       return { success: true };
     } catch (err) {

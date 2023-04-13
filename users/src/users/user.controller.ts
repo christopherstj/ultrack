@@ -7,13 +7,13 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @MessagePattern('/local/all')
+  @MessagePattern('local/all')
   async findAllAsync(): Promise<LocalUser[]> {
     const result = await this.userService.findAllLocalUsers();
     return result;
   }
 
-  @MessagePattern({ cmd: 'local/find-one' })
+  @MessagePattern('local/find-one')
   async findLocalUserAsync(@Payload() data: any): Promise<LocalUser> {
     console.log(data);
     const result = await this.userService.findLocalUser(data.email);

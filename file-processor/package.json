@@ -31,7 +31,7 @@
     "@nestjs/microservices": "^9.3.12",
     "@nestjs/platform-express": "^9.0.0",
     "@types/async": "^3.2.18",
-    "@ultrack/libs": "^1.0.10",
+    "@ultrack/libs": "^1.0.12",
     "async": "^3.2.4",
     "firebase-admin": "^11.6.0",
     "nest-winston": "^1.9.1",

@@ -6,6 +6,7 @@ import { UsersController } from './users/users.controller';
 import { CloudStorageController } from './cloud-storage/cloud-storage.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { EnvironmentVariables } from '@ultrack/libs';
+import { WorkoutsController } from './workouts/workouts.controller';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { EnvironmentVariables } from '@ultrack/libs';
       inject: [ConfigService],
     }),
   ],
-  controllers: [UsersController, CloudStorageController],
+  controllers: [UsersController, CloudStorageController, WorkoutsController],
   providers: [
     Logger,
     {
@@ -55,6 +56,18 @@ import { EnvironmentVariables } from '@ultrack/libs';
         return ClientProxyFactory.create({
           options: {
             port: 3003,
+          },
+          transport: Transport.TCP,
+        });
+      },
+      inject: [],
+    },
+    {
+      provide: 'WORKOUTS_SERVICE',
+      useFactory: () => {
+        return ClientProxyFactory.create({
+          options: {
+            port: 3004,
           },
           transport: Transport.TCP,
         });

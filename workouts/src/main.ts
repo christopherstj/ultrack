@@ -1,30 +1,26 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { WinstonModule } from 'nest-winston';
+import { EnvironmentVariables, createLogger } from '@ultrack/libs';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { createLogger, EnvironmentVariables } from '@ultrack/libs';
-import * as admin from 'firebase-admin';
+import { WinstonModule } from 'nest-winston';
 
 async function bootstrap() {
   const appConfig = await NestFactory.create(AppModule);
   const configService = appConfig.get(ConfigService<EnvironmentVariables>);
-  admin.initializeApp({
-    projectId: configService.get('PROJECT_ID'),
-  });
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
       transport: Transport.TCP,
       options: {
-        port: 3003,
+        port: 3004,
       },
       logger: WinstonModule.createLogger({
         instance: createLogger(
           configService.get('PROJECT_ID')!,
           'dev',
-          'microservice-file-processor',
+          'microservice-workouts',
         ),
       }),
     },

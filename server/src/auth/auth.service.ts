@@ -14,7 +14,7 @@ export class AuthService {
   async signIn(email: string, pass: string): Promise<any> {
     try {
       const user = await firstValueFrom(
-        this.usersServiceClient.send({ cmd: 'local/find-one' }, { email }),
+        this.usersServiceClient.send('local/find-one', { email }),
       );
 
       if (!user) throw new UnauthorizedException();

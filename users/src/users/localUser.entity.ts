@@ -14,5 +14,8 @@ export class LocalUser {
   lastName?: string;
 
   @Column()
-  hashedPassword: string;
+  hashedPassword?: string;
+
+  @Column()
+  source?: string;
 }

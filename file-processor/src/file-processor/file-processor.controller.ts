@@ -1,30 +1,41 @@
 import { Controller } from '@nestjs/common';
 import { FileProcessorService } from './file-processor.service';
-import { EventPattern } from '@nestjs/microservices';
-import { Express } from 'express';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('file-processor')
 export class FileProcessorController {
   constructor(private readonly fileProcessorService: FileProcessorService) {}
 
-  @EventPattern('/file-uploaded')
+  @MessagePattern('/file-uploaded')
   async processFileRecordsAsync(data: {
     user: string;
     fileName: string;
     file: Express.Multer.File;
-  }): Promise<void> {
-    await this.fileProcessorService.processFileAsync(
-      data.user,
-      data.fileName,
-      data.file,
-    );
+  }): Promise<{ success: boolean }> {
+    try {
+      await this.fileProcessorService.processFileAsync(
+        data.user,
+        data.fileName,
+        data.file,
+      );
+
+      return { success: true };
+    } catch (err) {
+      return { success: false };
+    }
   }
 
-  @EventPattern('/file-deleted')
+  @MessagePattern('/file-deleted')
   async deleteFileRecordsAsync(data: {
     user: string;
     fileName: string;
-  }): Promise<void> {
-    await this.fileProcessorService.deleteFileAsync(data.user, data.fileName);
+  }): Promise<{ success: boolean }> {
+    try {
+      await this.fileProcessorService.deleteFileAsync(data.user, data.fileName);
+
+      return { success: true };
+    } catch (err) {
+      return { success: false };
+    }
   }
 }
