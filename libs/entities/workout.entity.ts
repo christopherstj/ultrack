@@ -31,7 +31,7 @@ export class Workout {
     @Column({ type: "decimal", precision: 8, scale: 5 })
     avgSpeed: number;
 
-    @Column({ type: "decimal", precision: 8, scale: 5 })
+    @Column({ type: "decimal", precision: 12, scale: 5 })
     avgStepLength: number;
 
     @Column()
