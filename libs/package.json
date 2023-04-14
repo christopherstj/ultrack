@@ -1,6 +1,6 @@
 {
     "name": "@ultrack/libs",
-    "version": "1.0.22",
+    "version": "1.0.23",
     "description": "Private library for Ultrack",
     "type": "commonjs",
     "main": "dist/index.js",

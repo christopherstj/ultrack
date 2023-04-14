@@ -46,7 +46,7 @@ export class Workout {
     @Column()
     minHeartRate: number;
 
-    @Column({ type: "datetime" })
+    @Column({ type: "timestamp" })
     startTime: Date;
 
     @Column()
