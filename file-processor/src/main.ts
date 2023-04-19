@@ -16,9 +16,13 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
-      transport: Transport.TCP,
+      transport: Transport.RMQ,
       options: {
-        port: 3003,
+        urls: ['amqp://localhost:5672'],
+        queue: 'file_processor_queue',
+        queueOptions: {
+          durable: false,
+        },
       },
       logger: WinstonModule.createLogger({
         instance: createLogger(

@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { UserModule } from './users/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EnvironmentVariables } from '@ultrack/libs';
-import { LocalUser } from './users/localUser.entity';
+import { EnvironmentVariables, LocalUser, UserFitness } from '@ultrack/libs';
+import { UserFitnessModule } from './user-fitness/user-fitness.module';
 
 @Module({
   imports: [
@@ -20,11 +20,12 @@ import { LocalUser } from './users/localUser.entity';
         username: configService.get('MYSQL_USER_NAME'),
         password: configService.get('MYSQL_USER_PASSWORD'),
         database: configService.get('MYSQL_DB'),
-        entities: [LocalUser],
+        entities: [LocalUser, UserFitness],
         synchronize: process.env.NODE_ENV === 'development',
       }),
       inject: [ConfigService],
     }),
+    UserFitnessModule,
   ],
   controllers: [],
   providers: [],

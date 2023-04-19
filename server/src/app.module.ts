@@ -31,9 +31,13 @@ import { WorkoutsController } from './workouts/workouts.controller';
       useFactory: () => {
         return ClientProxyFactory.create({
           options: {
-            port: 3001,
+            urls: ['amqp://localhost:5672'],
+            queue: 'users_queue',
+            queueOptions: {
+              durable: false,
+            },
           },
-          transport: Transport.TCP,
+          transport: Transport.RMQ,
         });
       },
       inject: [],
@@ -42,10 +46,14 @@ import { WorkoutsController } from './workouts/workouts.controller';
       provide: 'CLOUD_STORAGE_SERVICE',
       useFactory: () => {
         return ClientProxyFactory.create({
+          transport: Transport.RMQ,
           options: {
-            port: 3002,
+            urls: ['amqp://localhost:5672'],
+            queue: 'cloud_storage_queue',
+            queueOptions: {
+              durable: false,
+            },
           },
-          transport: Transport.TCP,
         });
       },
       inject: [],
@@ -54,10 +62,14 @@ import { WorkoutsController } from './workouts/workouts.controller';
       provide: 'FILE_PROCESSOR_SERVICE',
       useFactory: () => {
         return ClientProxyFactory.create({
+          transport: Transport.RMQ,
           options: {
-            port: 3003,
+            urls: ['amqp://localhost:5672'],
+            queue: 'file_processor_queue',
+            queueOptions: {
+              durable: false,
+            },
           },
-          transport: Transport.TCP,
         });
       },
       inject: [],
@@ -66,10 +78,14 @@ import { WorkoutsController } from './workouts/workouts.controller';
       provide: 'WORKOUTS_SERVICE',
       useFactory: () => {
         return ClientProxyFactory.create({
+          transport: Transport.RMQ,
           options: {
-            port: 3004,
+            urls: ['amqp://localhost:5672'],
+            queue: 'workouts_queue',
+            queueOptions: {
+              durable: false,
+            },
           },
-          transport: Transport.TCP,
         });
       },
       inject: [],

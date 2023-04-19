@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LocalUser } from './localUser.entity';
+import { LocalUser } from '@ultrack/libs';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 

@@ -1,6 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { FileProcessorService } from './file-processor.service';
 import { MessagePattern } from '@nestjs/microservices';
+import { SuccessMessage } from '@ultrack/libs';
 
 @Controller('file-processor')
 export class FileProcessorController {
@@ -11,7 +12,7 @@ export class FileProcessorController {
     user: string;
     fileName: string;
     file: Express.Multer.File;
-  }): Promise<{ success: boolean }> {
+  }): Promise<SuccessMessage> {
     try {
       await this.fileProcessorService.processFileAsync(
         data.user,
@@ -29,7 +30,7 @@ export class FileProcessorController {
   async deleteFileRecordsAsync(data: {
     user: string;
     fileName: string;
-  }): Promise<{ success: boolean }> {
+  }): Promise<SuccessMessage> {
     try {
       await this.fileProcessorService.deleteFileAsync(data.user, data.fileName);
 

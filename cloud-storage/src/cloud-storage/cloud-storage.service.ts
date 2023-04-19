@@ -1,15 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
-import { EnvironmentVariables, UploadMessageData } from '@ultrack/libs';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
+import {
+  EnvironmentVariables,
+  SuccessMessage,
+  UploadMessageData,
+} from '@ultrack/libs';
 import { Storage } from '@google-cloud/storage';
 import { ConfigService } from '@nestjs/config';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class CloudStorageService {
-  constructor(private configService: ConfigService<EnvironmentVariables>) {}
+  constructor(
+    @Inject('FILE_PROCESSOR_SERVICE') private fileProcessorClient: ClientProxy,
+    private configService: ConfigService<EnvironmentVariables>,
+  ) {}
   async uploadFile(
     data: UploadMessageData,
-  ): Promise<{ success: boolean; fileName: string }> {
+  ): Promise<SuccessMessage & { fileName: string }> {
     try {
       console.log('uploading data');
 
@@ -31,16 +39,24 @@ export class CloudStorageService {
 
       await file.save(Buffer.from(data.file.buffer), options);
 
-      return { success: true, fileName: data.file.originalname };
+      const res = this.fileProcessorClient.send<SuccessMessage>(
+        '/file-uploaded',
+        {
+          user: data.user,
+          fileName: data.file.originalname,
+          file: data.file,
+        },
+      );
+
+      const { success } = await lastValueFrom(res);
+
+      return { success, fileName: data.file.originalname };
     } catch (err) {
       throw new RpcException('Upload file failed: ' + err);
     }
   }
 
-  async deleteFile(
-    user: string,
-    fileName: string,
-  ): Promise<{ success: boolean }> {
+  async deleteFile(user: string, fileName: string): Promise<SuccessMessage> {
     try {
       const storage = new Storage({
         projectId: this.configService.get('PROJECT_ID'),
@@ -62,7 +78,16 @@ export class CloudStorageService {
 
       console.log('file deleted from cloud storage');
 
-      return { success: true };
+      const result = this.fileProcessorClient.send<{
+        success: boolean;
+      }>('/file-deleted', {
+        user,
+        fileName,
+      });
+
+      const { success } = await lastValueFrom(result);
+
+      return { success };
     } catch (err) {
       throw new RpcException('Upload file failed: ' + err);
     }

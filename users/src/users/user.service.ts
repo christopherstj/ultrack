@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { LocalUser } from './localUser.entity';
+import { LocalUser } from '@ultrack/libs';
 
 @Injectable()
 export class UserService {
