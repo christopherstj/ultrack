@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { LocalUser } from './localUser.entity';
+import { LocalUser } from '@ultrack/libs';
 import { UserService } from './user.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 

@@ -1,14 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { EnvironmentVariables, Lap, Record } from '@ultrack/libs';
+import {
+  EnvironmentVariables,
+  Lap,
+  Record,
+  SuccessMessage,
+} from '@ultrack/libs';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import async, { AsyncWorker } from 'async';
-import { RpcException } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class FileProcessorService {
-  constructor(private configService: ConfigService<EnvironmentVariables>) {}
+  constructor(
+    @Inject('WORKOUTS_SERVICE') private workoutsService: ClientProxy,
+    private configService: ConfigService<EnvironmentVariables>,
+  ) {}
+
   async processFileAsync(
     user: string,
     fileName: string,
@@ -71,6 +80,11 @@ export class FileProcessorService {
         messages.deviceInfoMesgs,
       );
       console.log('uploaded');
+
+      this.workoutsService.emit('process-workout', {
+        user,
+        workoutId: fileName,
+      });
     } catch (err) {
       console.error(err);
       throw new RpcException(`Error uploading file ${fileName}: ${err}`);
@@ -132,7 +146,7 @@ export class FileProcessorService {
     fileName: string,
     data: T[],
     docIdField: string = 'timestamp',
-  ): Promise<boolean> {
+  ): Promise<SuccessMessage> {
     try {
       const db = getFirestore();
 
@@ -174,7 +188,7 @@ export class FileProcessorService {
 
       console.log(collection + ' uploaded');
 
-      return true;
+      return { success: true };
     } catch (err) {
       console.error(err);
       throw new RpcException(
@@ -232,10 +246,8 @@ export class FileProcessorService {
         43.3 * Math.pow(grade / 100, 3) +
         46.3 * Math.pow(grade / 100, 2) +
         19.5 * (grade / 100)) /
-      8;
+      1.5;
 
-    if (grade > 0) console.log(grade + ': ' + (effectivePace + 1));
-
-    return pace * (effectivePace + 1);
+    return pace * (effectivePace + 0.9);
   }
 }

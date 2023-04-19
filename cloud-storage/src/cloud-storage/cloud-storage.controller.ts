@@ -5,7 +5,7 @@ import {
   RpcException,
 } from '@nestjs/microservices';
 import { CloudStorageService } from './cloud-storage.service';
-import { UploadMessageData } from '@ultrack/libs';
+import { SuccessMessage, UploadMessageData } from '@ultrack/libs';
 
 @Controller('cloud-storage')
 export class CloudStorageController {
@@ -14,7 +14,7 @@ export class CloudStorageController {
   @MessagePattern('/upload')
   async uploadFileAsync(
     data: UploadMessageData,
-  ): Promise<{ success: boolean; fileName: string }> {
+  ): Promise<SuccessMessage & { fileName: string }> {
     const result = await this.cloudStorageService.uploadFile(data);
     if (result) return result;
     return { success: false, fileName: '' };
@@ -24,7 +24,7 @@ export class CloudStorageController {
   async deleteFileAsync(data: {
     user: string;
     fileName: string;
-  }): Promise<{ success: boolean }> {
+  }): Promise<SuccessMessage> {
     const result = await this.cloudStorageService.deleteFile(
       data.user,
       data.fileName,

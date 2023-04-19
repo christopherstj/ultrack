@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserFitness } from './user-fitness.entity';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { RpcException } from '@nestjs/microservices';
+import { SuccessMessage, UserFitness } from '@ultrack/libs';
 
 @Injectable()
 export class UserFitnessService {
@@ -13,7 +13,7 @@ export class UserFitnessService {
     private readonly configService: ConfigService,
   ) {}
 
-  async getUserThreshold(email: string) {
+  async getUserThreshold(email: string): Promise<number> {
     const user = await this.userFitnessRepo.findOne({
       where: {
         userId: email,
@@ -23,7 +23,10 @@ export class UserFitnessService {
     return user.thresholdPace;
   }
 
-  async setUserThreshold(email: string, threshold: number) {
+  async setUserThreshold(
+    email: string,
+    threshold: number,
+  ): Promise<SuccessMessage> {
     try {
       console.log(threshold);
       await this.userFitnessRepo.update(
