@@ -200,14 +200,10 @@ export class WorkoutsService {
     );
   }
 
-  getEffectiveLoad(paces: number[], threshold: number) {
-    return paces.reduce((prev, curr) => {
-      if (curr !== null && curr !== undefined) {
-        const load = curr / threshold / 36;
-        return prev + load;
-      } else {
-        return prev;
-      }
-    }, 0);
+  getEffectiveLoad(time: number, avgEffectivePace: number, threshold: number) {
+    return (time *
+      avgEffectivePace *
+      (avgEffectivePace / threshold)) /
+    (threshold * 36);
   }
 }
