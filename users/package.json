@@ -30,7 +30,7 @@
     "@nestjs/microservices": "^9.3.12",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
-    "@ultrack/libs": "^1.0.12",
+    "@ultrack/libs": "^1.0.23",
     "mysql2": "^3.2.0",
     "nest-winston": "^1.9.1",
     "reflect-metadata": "^0.1.13",
