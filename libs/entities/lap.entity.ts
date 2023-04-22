@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
-import { Workout } from "./workout.entity";
+import { WorkoutModel } from "./workout.entity";
 
 @Entity({
   name: "workouts_lap",
@@ -9,7 +9,7 @@ export class LapModel {
   lapIndex: number;
 
   @PrimaryColumn({ type: "varchar" })
-  @ManyToOne(() => Workout, (workout) => workout.workoutId, {
+  @ManyToOne(() => WorkoutModel, (workout) => workout.workoutId, {
     nullable: false,
     onUpdate: "CASCADE",
     onDelete: "CASCADE",
