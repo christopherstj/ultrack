@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
+import { UserFitnessModel } from "./user-fitness.entity";
+import { WorkoutModel } from "./workout.entity";
 
 @Entity({
   name: "securityModel_localUser",
@@ -18,4 +20,10 @@ export class LocalUserModel {
 
   @Column()
   source?: string;
+
+  @OneToOne(() => UserFitnessModel, (user) => user.user)
+  details: UserFitnessModel;
+
+  @OneToMany(() => WorkoutModel, (workout) => workout.user)
+  workouts: WorkoutModel[];
 }

@@ -5,8 +5,10 @@ import { LocalUserModel } from "./local-user.entity";
   name: "details_userFitness",
 })
 export class UserFitnessModel {
+  @OneToOne(() => LocalUserModel, (user) => user.details)
+  user: LocalUserModel;
+
   @PrimaryColumn()
-  @OneToOne(() => LocalUserModel, (localUser) => localUser.email)
   userId: string;
 
   @Column({ type: "decimal", precision: 8, scale: 5 })

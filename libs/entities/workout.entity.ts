@@ -1,19 +1,26 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+} from "typeorm";
 import { LocalUserModel } from "./local-user.entity";
+import { LapModel } from "./lap.entity";
 
 @Entity({
   name: "workouts_workout",
 })
 export class WorkoutModel {
+  @ManyToOne(() => LocalUserModel, (user) => user.workouts)
+  @JoinColumn({ name: "userId", referencedColumnName: "email" })
+  user: LocalUserModel;
+
   @PrimaryColumn({ type: "varchar" })
   workoutId: string;
 
   @PrimaryColumn({ type: "varchar" })
-  @ManyToOne(() => LocalUserModel, (user) => user.email, {
-    nullable: false,
-    onUpdate: "CASCADE",
-    onDelete: "CASCADE",
-  })
   userId: string;
 
   @Column({ type: "decimal", precision: 10, scale: 2 })
@@ -81,4 +88,7 @@ export class WorkoutModel {
 
   @Column({ type: "decimal", precision: 4, scale: 2 })
   effectiveIntensity: number;
+
+  @OneToMany(() => LapModel, (lapModel) => lapModel.workout)
+  laps: LapModel[];
 }

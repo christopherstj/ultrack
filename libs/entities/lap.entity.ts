@@ -1,19 +1,25 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+} from "typeorm";
 import { WorkoutModel } from "./workout.entity";
 
 @Entity({
   name: "workouts_lap",
 })
 export class LapModel {
+  @ManyToOne(() => WorkoutModel, (workout) => workout.laps)
+  @JoinColumn({ name: "workoutId", referencedColumnName: "workoutId" })
+  workout: WorkoutModel;
+
   @PrimaryColumn({ type: "int" })
   lapIndex: number;
 
   @PrimaryColumn({ type: "varchar" })
-  @ManyToOne(() => WorkoutModel, (workout) => workout.workoutId, {
-    nullable: false,
-    onUpdate: "CASCADE",
-    onDelete: "CASCADE",
-  })
   workoutId: string;
 
   @Column({ type: "int" })
