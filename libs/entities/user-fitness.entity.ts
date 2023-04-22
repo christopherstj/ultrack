@@ -1,13 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryColumn } from "typeorm";
+import { LocalUser } from "./local-user.entity";
 
 @Entity({
-  name: 'details_userFitness',
+  name: "details_userFitness",
 })
 export class UserFitness {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
+  @OneToOne(() => LocalUser, (localUser) => localUser.email)
   userId: string;
 
-  @Column({ type: 'decimal', precision: 8, scale: 5 })
+  @Column({ type: "decimal", precision: 8, scale: 5 })
   thresholdPace?: number;
 
   @Column()

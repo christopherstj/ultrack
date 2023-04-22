@@ -1,10 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity({
-  name: 'securityModel_localUser',
+  name: "securityModel_localUser",
 })
 export class LocalUser {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   email: string;
 
   @Column()
