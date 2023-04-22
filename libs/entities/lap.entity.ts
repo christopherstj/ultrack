@@ -81,4 +81,7 @@ export class LapModel {
 
   @Column({ type: "decimal", precision: 4, scale: 2 })
   effectiveIntensity: number;
+
+  @Column({ type: "int" })
+  muscleDamage: number;
 }
