@@ -70,7 +70,7 @@ export class LapModel {
   @Column({ type: "decimal", precision: 8, scale: 5 })
   effectivePace: number;
 
-  @Column()
+  @Column({ type: "int" })
   effectiveLoad: number;
 
   @Column({ type: "decimal", precision: 4, scale: 2 })

@@ -28,10 +28,10 @@ export class WorkoutModel {
   @Column({ type: "decimal", precision: 18, scale: 2 })
   movingTime: number;
 
-  @Column()
+  @Column({ type: "int" })
   avgCadence: number;
 
-  @Column()
+  @Column({ type: "int" })
   avgHeartRate: number;
 
   @Column({ type: "decimal", precision: 8, scale: 5 })
@@ -40,31 +40,31 @@ export class WorkoutModel {
   @Column({ type: "decimal", precision: 12, scale: 5 })
   avgStepLength: number;
 
-  @Column()
+  @Column({ type: "int" })
   maxCadence: number;
 
   @Column({ type: "decimal", precision: 8, scale: 5 })
   maxSpeed: number;
 
-  @Column()
+  @Column({ type: "int" })
   maxHeartRate: number;
 
-  @Column()
+  @Column({ type: "int" })
   minHeartRate: number;
 
   @Column({ type: "timestamp" })
   startTime: Date;
 
-  @Column()
+  @Column({ type: "varchar" })
   runType: string;
 
-  @Column()
+  @Column({ type: "int" })
   totalAscent: number;
 
-  @Column()
+  @Column({ type: "int" })
   totalDescent: number;
 
-  @Column()
+  @Column({ type: "int" })
   totalCalories: number;
 
   @Column({ type: "decimal", precision: 8, scale: 5 })
@@ -73,8 +73,8 @@ export class WorkoutModel {
   @Column({ type: "decimal", precision: 8, scale: 5 })
   effectivePace: number;
 
-  @Column()
-  trainingStress: number;
+  @Column({ type: "int" })
+  effectiveLoad: number;
 
   @Column({ type: "decimal", precision: 4, scale: 2 })
   effectiveIntensity: number;
