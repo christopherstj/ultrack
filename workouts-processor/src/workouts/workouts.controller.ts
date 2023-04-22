@@ -17,13 +17,4 @@ export class WorkoutsController {
     );
     return result;
   }
-
-  @MessagePattern('get-laps')
-  async getLapsAsync(@Payload() data: { user: string; workoutId: string }) {
-    // const result = await this.workoutsService.getLapsById(
-    //   data.user,
-    //   data.workoutId,
-    // );
-    // return result;
-  }
 }

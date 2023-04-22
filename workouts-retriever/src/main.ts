@@ -19,7 +19,7 @@ async function bootstrap() {
       transport: Transport.RMQ,
       options: {
         urls: ['amqp://localhost:5672'],
-        queue: 'workouts_processor_queue',
+        queue: 'workouts_retriever_queue',
         queueOptions: {
           durable: false,
         },
@@ -28,7 +28,7 @@ async function bootstrap() {
         instance: createLogger(
           configService.get('PROJECT_ID')!,
           'dev',
-          'microservice-workouts-processor',
+          'microservice-workouts-retriever',
         ),
       }),
     },

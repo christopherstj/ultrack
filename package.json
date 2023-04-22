@@ -1,10 +1,10 @@
 {
-    "scripts": {
-        "update-libs": "concurrently \"cd server && npm run update-libs\" \"cd users && npm run update-libs\" \"cd cloud-storage && npm run update-libs\" \"cd file-processor && npm run update-libs\" \"cd workouts && npm run update-libs\"",
-        "global-install": "concurrently \"cd server && npm i\" \"cd users && npm i\" \"cd cloud-storage && npm i\" \"cd file-processor && npm i\" \"cd workouts && npm i\"",
-        "start:dev": "concurrently \"cd server && npm run start:dev\" \"cd users && npm run start:dev\" \"cd cloud-storage && npm run start:dev\" \"cd file-processor && npm run start:dev\" \"cd workouts && npm run start:dev\""
-    },
-    "dependencies": {
-        "concurrently": "^8.0.1"
-    }
+  "scripts": {
+    "update-libs": "concurrently \"cd server && npm run update-libs\" \"cd users && npm run update-libs\" \"cd cloud-storage && npm run update-libs\" \"cd file-processor && npm run update-libs\" \"cd workouts-processor && npm run update-libs\" \"cd workouts-retriever && npm run update-libs\"",
+    "global-install": "concurrently \"cd server && npm i\" \"cd users && npm i\" \"cd cloud-storage && npm i\" \"cd file-processor && npm i\" \"cd workouts-processor && npm i\" \"cd workouts-retriever && npm i\"",
+    "start:dev": "concurrently \"cd server && npm run start:dev\" \"cd users && npm run start:dev\" \"cd cloud-storage && npm run start:dev\" \"cd file-processor && npm run start:dev\" \"cd workouts-processor && npm run start:dev\" \"cd workouts-retriever && npm run start:dev\""
+  },
+  "dependencies": {
+    "concurrently": "^8.0.1"
+  }
 }

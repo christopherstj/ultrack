@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { RpcException } from '@nestjs/microservices';
-import { SuccessMessage, UserFitness } from '@ultrack/libs';
+import { SuccessMessage, UserFitnessModel } from '@ultrack/libs';
 
 @Injectable()
 export class UserFitnessService {
   constructor(
-    @InjectRepository(UserFitness)
-    private userFitnessRepo: Repository<UserFitness>,
+    @InjectRepository(UserFitnessModel)
+    private userFitnessRepo: Repository<UserFitnessModel>,
     private readonly configService: ConfigService,
   ) {}
 

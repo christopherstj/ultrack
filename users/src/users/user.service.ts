@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { LocalUser } from '@ultrack/libs';
+import { LocalUserModel } from '@ultrack/libs';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(LocalUser) private localUserRepo: Repository<LocalUser>,
+    @InjectRepository(LocalUserModel)
+    private localUserRepo: Repository<LocalUserModel>,
   ) {}
 
-  async findAllLocalUsers(): Promise<LocalUser[]> {
+  async findAllLocalUsers(): Promise<LocalUserModel[]> {
     return this.localUserRepo.find({
       where: {
         source: 'local',
@@ -17,7 +18,7 @@ export class UserService {
     });
   }
 
-  async findLocalUser(email: string): Promise<LocalUser | null> {
+  async findLocalUser(email: string): Promise<LocalUserModel | null> {
     const user = await this.localUserRepo.findOne({
       where: {
         email,

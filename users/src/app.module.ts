@@ -2,7 +2,13 @@ import { Module } from '@nestjs/common';
 import { UserModule } from './users/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EnvironmentVariables, LocalUser, UserFitness } from '@ultrack/libs';
+import {
+  EnvironmentVariables,
+  LapModel,
+  LocalUserModel,
+  UserFitnessModel,
+  WorkoutModel,
+} from '@ultrack/libs';
 import { UserFitnessModule } from './user-fitness/user-fitness.module';
 
 @Module({
@@ -20,7 +26,7 @@ import { UserFitnessModule } from './user-fitness/user-fitness.module';
         username: configService.get('MYSQL_USER_NAME'),
         password: configService.get('MYSQL_USER_PASSWORD'),
         database: configService.get('MYSQL_DB'),
-        entities: [LocalUser, UserFitness],
+        entities: [LocalUserModel, UserFitnessModel, WorkoutModel, LapModel],
         synchronize: process.env.NODE_ENV === 'development',
       }),
       inject: [ConfigService],

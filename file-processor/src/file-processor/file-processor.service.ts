@@ -1,20 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  EnvironmentVariables,
-  Lap,
-  Record,
-  SuccessMessage,
-} from '@ultrack/libs';
-import { initializeApp } from 'firebase-admin/app';
+import { EnvironmentVariables, Lap, SuccessMessage } from '@ultrack/libs';
 import { getFirestore } from 'firebase-admin/firestore';
-import async, { AsyncWorker } from 'async';
+import async from 'async';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class FileProcessorService {
   constructor(
-    @Inject('WORKOUTS_SERVICE') private workoutsService: ClientProxy,
+    @Inject('WORKOUTS_PROCESSOR_SERVICE') private workoutsService: ClientProxy,
     private configService: ConfigService<EnvironmentVariables>,
   ) {}
 
@@ -39,7 +33,7 @@ export class FileProcessorService {
 
       const { messages, errors } = decoder.read();
 
-      this.addGradeToRecords(messages.recordMesgs);
+      this.processRecords(messages.recordMesgs);
 
       console.log(messages.recordMesgs.length);
 
@@ -49,12 +43,7 @@ export class FileProcessorService {
         fileName,
         messages.recordMesgs,
       );
-      await this.uploadCollection<Lap>(
-        user,
-        'laps',
-        fileName,
-        messages.lapMesgs,
-      );
+      await this.uploadCollection(user, 'laps', fileName, messages.lapMesgs);
       await this.uploadCollection(
         user,
         'sessions',
@@ -197,11 +186,13 @@ export class FileProcessorService {
     }
   }
 
-  addGradeToRecords(records: any[]) {
+  processRecords(records: any[]) {
     records.forEach((r, index, arr) => {
       const endIndex =
         index < records.length - 8 ? index + 7 : records.length - 1;
       const fiveAhead = arr[endIndex];
+
+      // Add smoothed grades
 
       if (!fiveAhead) {
         console.log(endIndex);
@@ -227,6 +218,10 @@ export class FileProcessorService {
           }
         }
       }
+
+      // scrubbing speed for sub-4 pace
+      if (r.speed > 6.7056) r.speed = records[index - 1].speed;
+
       if (index > 0)
         records[index - 1].effectivePace = this.getEffectivePace(
           records[index - 1].speed,
@@ -237,6 +232,8 @@ export class FileProcessorService {
     console.log('added grades');
   }
 
+  getGrade() {}
+
   getEffectivePace(pace: number, grade: number) {
     if (pace === null || pace === undefined) return null;
     if (grade === null || grade === undefined) return pace;
@@ -246,8 +243,8 @@ export class FileProcessorService {
         43.3 * Math.pow(grade / 100, 3) +
         46.3 * Math.pow(grade / 100, 2) +
         19.5 * (grade / 100)) /
-      1.5;
+      4.2;
 
-    return pace * (effectivePace + 0.9);
+    return pace * (effectivePace + 1.06);
   }
 }

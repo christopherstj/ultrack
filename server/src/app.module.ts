@@ -75,13 +75,29 @@ import { WorkoutsController } from './workouts/workouts.controller';
       inject: [],
     },
     {
-      provide: 'WORKOUTS_SERVICE',
+      provide: 'WORKOUTS_PROCESSOR_SERVICE',
       useFactory: () => {
         return ClientProxyFactory.create({
           transport: Transport.RMQ,
           options: {
             urls: ['amqp://localhost:5672'],
-            queue: 'workouts_queue',
+            queue: 'workouts_processor_queue',
+            queueOptions: {
+              durable: false,
+            },
+          },
+        });
+      },
+      inject: [],
+    },
+    {
+      provide: 'WORKOUTS_RETRIEVER_SERVICE',
+      useFactory: () => {
+        return ClientProxyFactory.create({
+          transport: Transport.RMQ,
+          options: {
+            urls: ['amqp://localhost:5672'],
+            queue: 'workouts_retriever_queue',
             queueOptions: {
               durable: false,
             },

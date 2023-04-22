@@ -27,7 +27,7 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/microservices": "^9.3.12",
     "@nestjs/platform-express": "^9.0.0",
-    "@ultrack/libs": "^1.0.23",
+    "@ultrack/libs": "^1.0.28",
     "amqp-connection-manager": "^4.1.12",
     "amqplib": "^0.10.3",
     "nest-winston": "^1.9.1",
