@@ -1,12 +1,12 @@
 import { Column, Entity, OneToOne, PrimaryColumn } from "typeorm";
-import { LocalUser } from "./local-user.entity";
+import { LocalUserModel } from "./local-user.entity";
 
 @Entity({
   name: "details_userFitness",
 })
-export class UserFitness {
+export class UserFitnessModel {
   @PrimaryColumn()
-  @OneToOne(() => LocalUser, (localUser) => localUser.email)
+  @OneToOne(() => LocalUserModel, (localUser) => localUser.email)
   userId: string;
 
   @Column({ type: "decimal", precision: 8, scale: 5 })

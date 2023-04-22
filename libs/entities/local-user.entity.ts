@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryColumn } from "typeorm";
 @Entity({
   name: "securityModel_localUser",
 })
-export class LocalUser {
+export class LocalUserModel {
   @PrimaryColumn()
   email: string;
 

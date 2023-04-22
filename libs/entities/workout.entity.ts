@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
-import { LocalUser } from "./local-user.entity";
+import { LocalUserModel } from "./local-user.entity";
 
 @Entity({
   name: "workouts_workout",
@@ -9,7 +9,7 @@ export class Workout {
   workoutId: string;
 
   @PrimaryColumn({ type: "varchar" })
-  @ManyToOne(() => LocalUser, (user) => user.email, {
+  @ManyToOne(() => LocalUserModel, (user) => user.email, {
     nullable: false,
     onUpdate: "CASCADE",
     onDelete: "CASCADE",

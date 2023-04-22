@@ -4,7 +4,7 @@ import { Workout } from "./workout.entity";
 @Entity({
   name: "workouts_lap",
 })
-export class Lap {
+export class LapModel {
   @PrimaryColumn({ type: "int" })
   lapIndex: number;
 
