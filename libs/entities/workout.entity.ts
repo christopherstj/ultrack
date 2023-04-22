@@ -70,6 +70,9 @@ export class WorkoutModel {
   @Column({ type: "decimal", precision: 8, scale: 5 })
   thresholdPace: number;
 
+  @Column({ type: "decimal", precision: 5, scale: 2 })
+  avgPercentGrade: number;
+
   @Column({ type: "decimal", precision: 8, scale: 5 })
   effectivePace: number;
 
