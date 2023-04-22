@@ -4,7 +4,7 @@ import { LocalUserModel } from "./local-user.entity";
 @Entity({
   name: "workouts_workout",
 })
-export class Workout {
+export class WorkoutModel {
   @PrimaryColumn({ type: "varchar" })
   workoutId: string;
 
