@@ -15,15 +15,15 @@ export class FitnessDayModel {
   @PrimaryColumn({ type: "date" })
   day: Date;
 
-  @Column({ type: "int" })
+  @Column({ type: "int", nullable: false, default: 0 })
   aerobicFitness: number;
 
-  @Column({ type: "int" })
+  @Column({ type: "int", nullable: false, default: 0 })
   aerobicFatigue: number;
 
-  @Column({ type: "int" })
+  @Column({ type: "int", nullable: false, default: 0 })
   durability: number;
 
-  @Column({ type: "int" })
+  @Column({ type: "int", nullable: false, default: 0 })
   damage: number;
 }
