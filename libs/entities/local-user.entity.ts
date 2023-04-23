@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { UserFitnessModel } from "./user-fitness.entity";
 import { WorkoutModel } from "./workout.entity";
+import { FitnessDayModel } from "./fitness-day.entity";
 
 @Entity({
   name: "securityModel_localUser",
@@ -26,4 +27,7 @@ export class LocalUserModel {
 
   @OneToMany(() => WorkoutModel, (workout) => workout.user)
   workouts: WorkoutModel[];
+
+  @OneToMany(() => FitnessDayModel, (day) => day.user)
+  fitnessDays: FitnessDayModel[];
 }
