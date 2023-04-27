@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import {
@@ -9,7 +9,11 @@ import {
   Session,
   Lap,
   LapModel,
+  FitnessDayModel,
+  formatDateForQuery,
 } from '@ultrack/libs';
+
+const MILLS_PER_DAY = 60 * 60 * 24 * 1000;
 
 @Injectable()
 export class WorkoutsService {
@@ -21,6 +25,8 @@ export class WorkoutsService {
     private workoutRepo: Repository<WorkoutModel>,
     @InjectRepository(LapModel)
     private lapRepo: Repository<LapModel>,
+    @InjectRepository(FitnessDayModel)
+    private fitnessDayRepo: Repository<FitnessDayModel>,
   ) {}
 
   async computeWorkout(
@@ -70,6 +76,10 @@ export class WorkoutsService {
 
       const avgGrade = this.getAvgGrade(records.map((r) => r.percentGrade));
 
+      const muscleDamage = this.getMuscleDamageByRecords(
+        records.map((r) => ({ speed: r.speed, percentGrade: r.percentGrade })),
+      );
+
       const workout = new WorkoutModel();
 
       workout.workoutId = workoutId;
@@ -96,12 +106,18 @@ export class WorkoutsService {
       workout.effectivePace = avgEffectivePace;
       workout.effectiveLoad = effectiveLoad;
       workout.effectiveIntensity = avgEffectivePace / threshold;
+      workout.muscleDamage = muscleDamage;
 
       const result = await this.workoutRepo.save(workout);
 
       console.log(`workout ${workoutId} added to SQL`);
 
-      this.processLaps(user, workoutId, threshold);
+      await this.processLaps(user, workoutId, threshold);
+
+      await this.updateFitnessDays(
+        user,
+        new Date(new Date(session.startTime).toDateString()),
+      );
 
       return { success: true };
     } catch (err) {
@@ -170,6 +186,10 @@ export class WorkoutsService {
 
     const avgGrade = this.getAvgGrade(records.map((r) => r.percentGrade));
 
+    const muscleDamage = this.getMuscleDamageByRecords(
+      records.map((r) => ({ speed: r.speed, percentGrade: r.percentGrade })),
+    );
+
     const lapModel = new LapModel();
 
     lapModel.avgPercentGrade = avgGrade;
@@ -194,8 +214,194 @@ export class WorkoutsService {
     lapModel.totalTime = lap.totalElapsedTime;
     lapModel.trackedTime = lap.totalTimerTime;
     lapModel.workoutId = workoutId;
+    lapModel.muscleDamage = muscleDamage;
 
     return lapModel;
+  }
+
+  async updateFitnessDays(user: string, day: Date) {
+    try {
+      const daysToUpdate: {
+        day: Date;
+        effectiveLoad: boolean;
+        muscleDamage: boolean;
+      }[] = [];
+      for (var i = 0; i < 90; i++) {
+        const newDay: {
+          day: Date;
+          effectiveLoad: boolean;
+          muscleDamage: boolean;
+        } = {
+          day: new Date(day.getTime() + MILLS_PER_DAY * i),
+          effectiveLoad: i < 60,
+          muscleDamage: true,
+        };
+        daysToUpdate.push(newDay);
+      }
+
+      const result = await Promise.all(
+        daysToUpdate.map(async (dayToUpdate) => {
+          try {
+            const fitnessDay = new FitnessDayModel();
+
+            fitnessDay.userId = user;
+            fitnessDay.day = dayToUpdate.day;
+
+            const muscleDamage = await this.getMuscleDamageByDate(
+              user,
+              dayToUpdate.day,
+            );
+            const muscleDurability = await this.getMuscleDurability(
+              user,
+              dayToUpdate.day,
+            );
+
+            fitnessDay.damage = muscleDamage;
+            fitnessDay.durability = muscleDurability;
+
+            if (dayToUpdate.effectiveLoad) {
+              const aerobicFitness = await this.getAerobicFitness(
+                user,
+                dayToUpdate.day,
+              );
+              const aerobicFatigue = await this.getAerobicFatigue(
+                user,
+                dayToUpdate.day,
+              );
+
+              fitnessDay.aerobicFitness = aerobicFitness;
+              fitnessDay.aerobicFatigue = aerobicFatigue;
+            }
+
+            await this.saveFitnessDay(fitnessDay);
+
+            return true;
+          } catch (err) {
+            console.error(err);
+            return false;
+          }
+        }),
+      );
+
+      if (result.every((value) => value)) return true;
+    } catch (err) {
+      console.error(err);
+      throw new RpcException('Saving fitness days failed: ' + err);
+    }
+  }
+
+  async saveFitnessDay(fitnessDay: FitnessDayModel) {
+    const existingFitnessDay = await this.fitnessDayRepo.findOne({
+      where: { userId: fitnessDay.userId, day: fitnessDay.day },
+    });
+    console.log(fitnessDay);
+    if (existingFitnessDay) {
+      existingFitnessDay.damage = fitnessDay.damage;
+      existingFitnessDay.durability = fitnessDay.durability;
+
+      if (fitnessDay.aerobicFatigue && fitnessDay.aerobicFitness) {
+        existingFitnessDay.aerobicFatigue = fitnessDay.aerobicFatigue;
+        existingFitnessDay.aerobicFitness = fitnessDay.aerobicFitness;
+        await this.fitnessDayRepo.save(existingFitnessDay);
+      }
+    } else {
+      await this.fitnessDayRepo.save(fitnessDay);
+    }
+  }
+
+  async getAerobicFitness(user: string, day: Date) {
+    const startDate = new Date(day.getTime() - MILLS_PER_DAY * 60);
+    console.log(
+      `SELECT SUM(effectiveLoad) / DATEDIFF('${formatDateForQuery(
+        day,
+      )}', '${formatDateForQuery(
+        startDate,
+      )}') AS aerobicFitness FROM workouts_workout WHERE userId = '${user}' AND startTime BETWEEN '${formatDateForQuery(
+        startDate,
+      )}' AND '${formatDateForQuery(day)}';`,
+    );
+    const result = await this.workoutRepo.query(
+      'SELECT SUM(effectiveLoad) / DATEDIFF(?, ?) AS aerobicFitness FROM workouts_workout WHERE userId = ? AND startTime BETWEEN ? AND ?;',
+      [
+        formatDateForQuery(day),
+        formatDateForQuery(startDate),
+        user,
+        formatDateForQuery(startDate),
+        formatDateForQuery(day),
+      ],
+    );
+
+    return result[0].aerobicFitness;
+  }
+
+  async getAerobicFatigue(user: string, day: Date) {
+    const startDate = new Date(day.getTime() - MILLS_PER_DAY * 7);
+    const result = await this.workoutRepo.query(
+      'SELECT SUM(effectiveLoad) / DATEDIFF(?, ?) AS aerobicFatigue FROM workouts_workout WHERE userId = ? AND startTime BETWEEN ? AND ?;',
+      [
+        formatDateForQuery(day),
+        formatDateForQuery(startDate),
+        user,
+        formatDateForQuery(startDate),
+        formatDateForQuery(day),
+      ],
+    );
+
+    return result[0].aerobicFatigue;
+  }
+
+  async getMuscleDurability(user: string, day: Date) {
+    const startDate = new Date(day.getTime() - MILLS_PER_DAY * 90);
+    const result = await this.workoutRepo.query(
+      'SELECT SUM(muscleDamage) / DATEDIFF(?, ?) AS muscleDurability FROM workouts_workout WHERE userId = ? AND startTime BETWEEN ? AND ?;',
+      [
+        formatDateForQuery(day),
+        formatDateForQuery(startDate),
+        user,
+        formatDateForQuery(startDate),
+        formatDateForQuery(day),
+      ],
+    );
+
+    return result[0].muscleDurability;
+  }
+
+  async getMuscleDamageByDate(user: string, day: Date) {
+    const startDate = new Date(day.getTime() - MILLS_PER_DAY * 7);
+    const result = await this.workoutRepo.query(
+      'SELECT SUM(muscleDamage) / DATEDIFF(?, ?) AS muscleDamage FROM workouts_workout WHERE userId = ? AND startTime BETWEEN ? AND ?;',
+      [
+        formatDateForQuery(day),
+        formatDateForQuery(startDate),
+        user,
+        formatDateForQuery(startDate),
+        formatDateForQuery(day),
+      ],
+    );
+
+    return result[0].muscleDamage;
+  }
+
+  getMuscleDamageByRecords(
+    data: {
+      percentGrade: number | null | undefined;
+      speed: number | null | undefined;
+    }[],
+  ) {
+    const damage = data.reduce((prev, curr) => {
+      if (
+        curr.percentGrade !== null &&
+        curr.percentGrade !== undefined &&
+        curr.speed !== null &&
+        curr.speed !== undefined &&
+        curr.percentGrade < 0
+      ) {
+        return prev + (curr.percentGrade / 100) * curr.speed;
+      } else {
+        return prev;
+      }
+    }, 0);
+    return Math.abs(damage / 10);
   }
 
   getAvgGrade(grades: (number | null | undefined)[]) {

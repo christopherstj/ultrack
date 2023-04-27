@@ -4,6 +4,7 @@ import { WorkoutsService } from './workouts.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
+  FitnessDayModel,
   LapModel,
   LocalUserModel,
   UserFitnessModel,
@@ -19,6 +20,7 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       UserFitnessModel,
       WorkoutModel,
       LapModel,
+      FitnessDayModel,
     ]),
   ],
   controllers: [WorkoutsController],

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
+  FitnessDayModel,
   LapModel,
   LocalUserModel,
   UserFitnessModel,
@@ -18,6 +19,7 @@ import { UserService } from './user.service';
       UserFitnessModel,
       WorkoutModel,
       LapModel,
+      FitnessDayModel,
     ]),
   ],
   exports: [],

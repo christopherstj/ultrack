@@ -4,6 +4,7 @@ import { UserFitnessController } from './user-fitness.controller';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
+  FitnessDayModel,
   LapModel,
   LocalUserModel,
   UserFitnessModel,
@@ -18,6 +19,7 @@ import {
       UserFitnessModel,
       WorkoutModel,
       LapModel,
+      FitnessDayModel,
     ]),
   ],
   exports: [UserFitnessService],

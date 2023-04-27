@@ -220,7 +220,7 @@ export class FileProcessorService {
       }
 
       // scrubbing speed for sub-4 pace
-      if (r.speed > 6.7056) r.speed = records[index - 1].speed;
+      if (r.speed > 6.7056 || r.speed < 0) r.speed = records[index - 1].speed;
 
       if (index > 0)
         records[index - 1].effectivePace = this.getEffectivePace(
@@ -232,8 +232,6 @@ export class FileProcessorService {
     console.log('added grades');
   }
 
-  getGrade() {}
-
   getEffectivePace(pace: number, grade: number) {
     if (pace === null || pace === undefined) return null;
     if (grade === null || grade === undefined) return pace;
@@ -243,7 +241,7 @@ export class FileProcessorService {
         43.3 * Math.pow(grade / 100, 3) +
         46.3 * Math.pow(grade / 100, 2) +
         19.5 * (grade / 100)) /
-      4.2;
+      4.5;
 
     return pace * (effectivePace + 1.06);
   }

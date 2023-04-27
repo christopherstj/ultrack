@@ -30,7 +30,7 @@
     "@nestjs/microservices": "^9.3.12",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
-    "@ultrack/libs": "^1.0.28",
+    "@ultrack/libs": "^1.0.33",
     "amqp-connection-manager": "^4.1.12",
     "amqplib": "^0.10.3",
     "mysql2": "^3.2.0",

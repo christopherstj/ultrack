@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   EnvironmentVariables,
+  FitnessDayModel,
   LapModel,
   LocalUserModel,
   UserFitnessModel,
@@ -26,7 +27,13 @@ import { UserFitnessModule } from './user-fitness/user-fitness.module';
         username: configService.get('MYSQL_USER_NAME'),
         password: configService.get('MYSQL_USER_PASSWORD'),
         database: configService.get('MYSQL_DB'),
-        entities: [LocalUserModel, UserFitnessModel, WorkoutModel, LapModel],
+        entities: [
+          LocalUserModel,
+          UserFitnessModel,
+          WorkoutModel,
+          LapModel,
+          FitnessDayModel,
+        ],
         synchronize: process.env.NODE_ENV === 'development',
       }),
       inject: [ConfigService],
