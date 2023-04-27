@@ -12,7 +12,11 @@ WORKDIR /app
 # Copying this first prevents re-running npm install on every code change.
 COPY --chown=node:node package*.json ./
 
+ARG GCP_SA_KEY
+
 # Install app dependencies using the `npm ci` command instead of `npm install`
+RUN echo ${GCP_SA_KEY} | base64 -d > ./gcp-service-account-key.json
+ENV GOOGLE_APPLICATION_CREDENTIALS=./gcloud-api-key.json
 RUN npx google-artifactregistry-auth
 RUN npm ci
 
@@ -44,6 +48,9 @@ RUN npm run build
 ENV NODE_ENV production
 
 # Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
+RUN echo ${GCP_SA_KEY} | base64 -d > ./gcp-service-account-key.json
+ENV GOOGLE_APPLICATION_CREDENTIALS=./gcloud-api-key.json
+RUN npx google-artifactregistry-auth
 RUN npm ci --only=production && npm cache clean --force
 
 USER node
