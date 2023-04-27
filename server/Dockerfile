@@ -16,7 +16,8 @@ ARG GCP_SA_KEY
 
 # Install app dependencies using the `npm ci` command instead of `npm install`
 RUN echo ${GCP_SA_KEY} | base64 -d > ./gcp-service-account-key.json
-ENV GOOGLE_APPLICATION_CREDENTIALS=./gcloud-api-key.json
+RUN export GOOGLE_APPLICATION_CREDENTIALS=./gcp-service-account-key.json
+RUN npm i google-artifactregistry-auth
 RUN npx google-artifactregistry-auth
 RUN npm ci
 
@@ -49,7 +50,7 @@ ENV NODE_ENV production
 
 # Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
 RUN echo ${GCP_SA_KEY} | base64 -d > ./gcp-service-account-key.json
-ENV GOOGLE_APPLICATION_CREDENTIALS=./gcloud-api-key.json
+RUN export GOOGLE_APPLICATION_CREDENTIALS=./gcp-service-account-key.json
 RUN npm i google-artifactregistry-auth
 RUN npx google-artifactregistry-auth
 RUN npm ci --only=production && npm cache clean --force
