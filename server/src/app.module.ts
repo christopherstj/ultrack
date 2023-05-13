@@ -8,8 +8,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { EnvironmentVariables } from '@ultrack/libs';
 import { WorkoutsController } from './workouts/workouts.controller';
 
-//test
-
 @Module({
   imports: [
     ConfigModule.forRoot({
