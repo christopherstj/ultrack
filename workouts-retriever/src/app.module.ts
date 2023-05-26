@@ -7,6 +7,11 @@ import { ConfigModule } from '@nestjs/config';
     WorkoutsRetrieverModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
+      load: [
+        () => ({
+          ...process.env,
+        }),
+      ],
     }),
   ],
   controllers: [],

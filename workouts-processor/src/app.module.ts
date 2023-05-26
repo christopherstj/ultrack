@@ -17,6 +17,11 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
     WorkoutsModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
+      load: [
+        () => ({
+          ...process.env,
+        }),
+      ],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

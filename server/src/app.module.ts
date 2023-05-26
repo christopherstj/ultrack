@@ -12,6 +12,11 @@ import { WorkoutsController } from './workouts/workouts.controller';
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
+      load: [
+        () => ({
+          ...process.env,
+        }),
+      ],
     }),
     AuthModule,
     JwtModule.registerAsync({

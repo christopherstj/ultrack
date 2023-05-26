@@ -9,6 +9,11 @@ import { EnvironmentVariables } from '@ultrack/libs';
     FileProcessorModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
+      load: [
+        () => ({
+          ...process.env,
+        }),
+      ],
     }),
   ],
   controllers: [],

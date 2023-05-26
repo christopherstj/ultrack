@@ -8,6 +8,11 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
     CloudStorageModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
+      load: [
+        () => ({
+          ...process.env,
+        }),
+      ],
     }),
   ],
   controllers: [],
