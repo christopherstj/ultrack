@@ -17,6 +17,11 @@ import { UserFitnessModule } from './user-fitness/user-fitness.module';
     UserModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.development.local', '.env.development', '.env'],
+      load: [
+        () => ({
+          ...process.env,
+        }),
+      ],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
