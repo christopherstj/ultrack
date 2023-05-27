@@ -11,7 +11,6 @@ import {
   WorkoutModel,
 } from '@ultrack/libs';
 import { UserFitnessModule } from './user-fitness/user-fitness.module';
-// test
 
 @Module({
   imports: [
@@ -35,23 +34,26 @@ import { UserFitnessModule } from './user-fitness/user-fitness.module';
     ),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService<EnvironmentVariables>) => ({
-        type: 'mysql',
-        host: configService.get('MYSQL_HOST'),
-        port: 3306,
-        username: configService.get('MYSQL_USER_NAME'),
-        password: configService.get('MYSQL_USER_PASSWORD'),
-        database: configService.get('MYSQL_DB'),
-        connectTimeout: 20000,
-        entities: [
-          LocalUserModel,
-          UserFitnessModel,
-          WorkoutModel,
-          LapModel,
-          FitnessDayModel,
-        ],
-        synchronize: process.env.NODE_ENV === 'development',
-      }),
+      useFactory: (configService: ConfigService<EnvironmentVariables>) => {
+        console.log(configService.get('MYSQL_USER_NAME'));
+        return {
+          type: 'mysql',
+          host: configService.get('MYSQL_HOST'),
+          port: 3306,
+          username: configService.get('MYSQL_USER_NAME'),
+          password: configService.get('MYSQL_USER_PASSWORD'),
+          database: configService.get('MYSQL_DB'),
+          connectTimeout: 20000,
+          entities: [
+            LocalUserModel,
+            UserFitnessModel,
+            WorkoutModel,
+            LapModel,
+            FitnessDayModel,
+          ],
+          synchronize: process.env.NODE_ENV === 'development',
+        };
+      },
       inject: [ConfigService],
     }),
     UserFitnessModule,
