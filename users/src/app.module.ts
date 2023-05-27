@@ -17,22 +17,21 @@ import { UserFitnessModule } from './user-fitness/user-fitness.module';
   imports: [
     UserModule,
     ConfigModule.forRoot(
-      // process.env.NODE_ENV === 'production'
-      //   ?
-      {
-        load: [
-          () => ({
-            MYSQL_HOST: process.env.MYSQL_HOST,
-            MYSQL_USER_NAME: process.env.MYSQL_USER_NAME,
-            MYSQL_PASSWORD: process.env.MYSQL_PASSWORD,
-            MYSQL_DB: process.env.MYSQL_DB,
-            JWT_SECRET: process.env.JWT_SECRET,
-          }),
-        ],
-      },
-      // : {
-      //     envFilePath: ['.env.development.local', '.env.development', '.env'],
-      //   },
+      process.env.NODE_ENV === 'production'
+        ? {
+            load: [
+              () => ({
+                MYSQL_HOST: process.env.MYSQL_HOST,
+                MYSQL_USER_NAME: process.env.MYSQL_USER_NAME,
+                MYSQL_PASSWORD: process.env.MYSQL_PASSWORD,
+                MYSQL_DB: process.env.MYSQL_DB,
+                JWT_SECRET: process.env.JWT_SECRET,
+              }),
+            ],
+          }
+        : {
+            envFilePath: ['.env.development.local', '.env.development', '.env'],
+          },
     ),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -43,6 +42,7 @@ import { UserFitnessModule } from './user-fitness/user-fitness.module';
         username: configService.get('MYSQL_USER_NAME'),
         password: configService.get('MYSQL_USER_PASSWORD'),
         database: configService.get('MYSQL_DB'),
+        connectTimeout: 20000,
         entities: [
           LocalUserModel,
           UserFitnessModel,
