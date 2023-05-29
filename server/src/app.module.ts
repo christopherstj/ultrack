@@ -36,7 +36,7 @@ import { WorkoutsController } from './workouts/workouts.controller';
       useFactory: () => {
         return ClientProxyFactory.create({
           options: {
-            urls: ['amqp://localhost:5672'],
+            urls: [`amqp://${process.env.RABBITMQ_IP}:5672`],
             queue: 'users_queue',
             queueOptions: {
               durable: false,
@@ -53,7 +53,7 @@ import { WorkoutsController } from './workouts/workouts.controller';
         return ClientProxyFactory.create({
           transport: Transport.RMQ,
           options: {
-            urls: ['amqp://localhost:5672'],
+            urls: [`amqp://${process.env.RABBITMQ_IP}:5672`],
             queue: 'cloud_storage_queue',
             queueOptions: {
               durable: false,
@@ -69,7 +69,7 @@ import { WorkoutsController } from './workouts/workouts.controller';
         return ClientProxyFactory.create({
           transport: Transport.RMQ,
           options: {
-            urls: ['amqp://localhost:5672'],
+            urls: [`amqp://${process.env.RABBITMQ_IP}:5672`],
             queue: 'file_processor_queue',
             queueOptions: {
               durable: false,
@@ -85,7 +85,7 @@ import { WorkoutsController } from './workouts/workouts.controller';
         return ClientProxyFactory.create({
           transport: Transport.RMQ,
           options: {
-            urls: ['amqp://localhost:5672'],
+            urls: [`amqp://${process.env.RABBITMQ_IP}:5672`],
             queue: 'workouts_processor_queue',
             queueOptions: {
               durable: false,
@@ -101,7 +101,7 @@ import { WorkoutsController } from './workouts/workouts.controller';
         return ClientProxyFactory.create({
           transport: Transport.RMQ,
           options: {
-            urls: ['amqp://localhost:5672'],
+            urls: [`amqp://${process.env.RABBITMQ_IP}:5672`],
             queue: 'workouts_retriever_queue',
             queueOptions: {
               durable: false,
