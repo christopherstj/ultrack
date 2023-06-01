@@ -7,6 +7,7 @@ import { CloudStorageController } from './cloud-storage/cloud-storage.controller
 import { JwtModule } from '@nestjs/jwt';
 import { EnvironmentVariables } from '@ultrack/libs';
 import { WorkoutsController } from './workouts/workouts.controller';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -28,7 +29,12 @@ import { WorkoutsController } from './workouts/workouts.controller';
       inject: [ConfigService],
     }),
   ],
-  controllers: [UsersController, CloudStorageController, WorkoutsController],
+  controllers: [
+    UsersController,
+    CloudStorageController,
+    WorkoutsController,
+    AppController,
+  ],
   providers: [
     Logger,
     {
