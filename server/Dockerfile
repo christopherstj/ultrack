@@ -7,8 +7,6 @@ FROM node:19-alpine As development
 # Create app directory
 WORKDIR /app
 
-EXPOSE 80
-
 # Copy application dependency manifests to the container image.
 # A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
 # Copying this first prevents re-running npm install on every code change.
@@ -39,8 +37,6 @@ USER node
 FROM node:19-alpine As build
 
 WORKDIR /app
-
-EXPOSE 80
 
 COPY .npmrc ./
 
@@ -75,6 +71,8 @@ FROM node:19-alpine As production
 # Copy the bundled code from the build stage to the production image
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node --from=build /app/dist ./dist
+
+EXPOSE 80
 
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]
