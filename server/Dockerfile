@@ -40,6 +40,8 @@ FROM node:19-alpine As build
 
 WORKDIR /app
 
+EXPOSE 80
+
 COPY .npmrc ./
 
 COPY --chown=node:node package*.json ./
