@@ -5,8 +5,8 @@ import { Response, Request } from 'express';
 export class AppController {
   constructor() {}
 
-  @Get('')
+  @Get('/')
   async test(@Req() req: Request, @Res() res: Response) {
-    res.status(200).send('Hello World!');
+    res.status(200).send('Healthy');
   }
 }
