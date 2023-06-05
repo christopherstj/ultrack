@@ -7,6 +7,6 @@ export class AppController {
 
   @Get('/')
   async test(@Req() req: Request, @Res() res: Response) {
-    res.status(200).send('Healthy');
+    res.status(200).send('Look Mom I Made It');
   }
 }
