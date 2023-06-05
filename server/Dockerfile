@@ -51,7 +51,6 @@ COPY --chown=node:node . .
 RUN npm run build
 
 # Set NODE_ENV environment variable
-ENV HOST '0.0.0.0'
 ENV NODE_ENV production
 
 # Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
@@ -73,6 +72,7 @@ FROM node:19-alpine As production
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node --from=build /app/dist ./dist
 
+ENV HOST '0.0.0.0'
 EXPOSE 80
 
 # Start the server using the production build
