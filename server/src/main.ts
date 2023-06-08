@@ -9,7 +9,7 @@ const bootstrap = async () => {
   const appConfig = await NestFactory.create(AppModule);
   const configService = appConfig.get(ConfigService<EnvironmentVariables>);
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+  const app1 = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: WinstonModule.createLogger({
       instance: createLogger(
         configService.get('PROJECT_ID')!,
@@ -18,6 +18,17 @@ const bootstrap = async () => {
       ),
     }),
   });
-  await Promise.all([app.listen(443), app.listen(80)]);
+
+  const app2 = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: WinstonModule.createLogger({
+      instance: createLogger(
+        configService.get('PROJECT_ID')!,
+        'dev',
+        'https-server',
+      ),
+    }),
+  });
+
+  await Promise.all([app2.listen(443), app1.listen(80)]);
 };
 bootstrap();
