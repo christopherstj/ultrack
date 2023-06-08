@@ -18,6 +18,6 @@ const bootstrap = async () => {
       ),
     }),
   });
-  await app.listen(80);
+  await Promise.all([app.listen(443), app.listen(80)]);
 };
 bootstrap();
