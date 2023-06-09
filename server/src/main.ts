@@ -12,6 +12,8 @@ import * as http from 'http';
 import * as express from 'express';
 import certManager from '@google-cloud/certificate-manager';
 
+// TDRTbUQwZG5uWnZGRm1yNUtSY3p3QQ==
+
 const bootstrap = async () => {
   const appConfig = await NestFactory.create(AppModule);
   const configService = appConfig.get(ConfigService<EnvironmentVariables>);
@@ -35,5 +37,6 @@ const bootstrap = async () => {
   await app.init();
 
   http.createServer(server).listen(80);
+  http.createServer(server).listen(443);
 };
 bootstrap();

@@ -74,6 +74,7 @@ COPY --chown=node:node --from=build /app/dist ./dist
 
 ENV HOST '0.0.0.0'
 EXPOSE 80
+EXPOSE 443
 
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]
