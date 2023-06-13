@@ -20,7 +20,7 @@ export class LocalUserModel {
   hashedPassword?: string;
 
   @Column()
-  source?: string;
+  authSource?: string;
 
   @OneToOne(() => UserFitnessModel, (user) => user.user)
   details: UserFitnessModel;
