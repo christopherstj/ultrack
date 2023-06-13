@@ -33,7 +33,7 @@
     "@nestjs/microservices": "^9.3.12",
     "@nestjs/platform-express": "^9.0.0",
     "@types/async": "^3.2.18",
-    "@ultrack/libs": "^1.0.35",
+    "@ultrack/libs": "^1.0.36",
     "amqp-connection-manager": "^4.1.12",
     "amqplib": "^0.10.3",
     "async": "^3.2.4",
