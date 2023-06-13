@@ -13,7 +13,7 @@ export class UserService {
   async findAllLocalUsers(): Promise<LocalUserModel[]> {
     return this.localUserRepo.find({
       where: {
-        source: 'local',
+        authSource: 'local',
       },
     });
   }
@@ -22,7 +22,7 @@ export class UserService {
     const user = await this.localUserRepo.findOne({
       where: {
         email,
-        source: 'local',
+        authSource: 'local',
       },
     });
     return user;
