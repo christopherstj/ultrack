@@ -10,9 +10,6 @@ import { ConfigService } from '@nestjs/config';
 import * as https from 'https';
 import * as http from 'http';
 import * as express from 'express';
-import certManager from '@google-cloud/certificate-manager';
-
-// TDRTbUQwZG5uWnZGRm1yNUtSY3p3QQ==
 
 const bootstrap = async () => {
   const appConfig = await NestFactory.create(AppModule);
@@ -34,9 +31,12 @@ const bootstrap = async () => {
     },
   );
 
-  await app.init();
-
-  http.createServer(server).listen(80);
-  http.createServer(server).listen(443);
+  if (process.env.NODE_ENV === 'production') {
+    await app.init();
+    http.createServer(server).listen(80);
+    http.createServer(server).listen(443);
+  } else {
+    await app.listen(3000);
+  }
 };
 bootstrap();

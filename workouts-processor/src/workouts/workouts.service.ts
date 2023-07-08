@@ -121,7 +121,6 @@ export class WorkoutsService {
 
       return { success: true };
     } catch (err) {
-      console.error(err);
       throw new RpcException(err);
     }
   }
@@ -285,7 +284,6 @@ export class WorkoutsService {
 
       if (result.every((value) => value)) return true;
     } catch (err) {
-      console.error(err);
       throw new RpcException('Saving fitness days failed: ' + err);
     }
   }

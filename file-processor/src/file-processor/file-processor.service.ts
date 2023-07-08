@@ -75,8 +75,7 @@ export class FileProcessorService {
         workoutId: fileName,
       });
     } catch (err) {
-      console.error(err);
-      throw new RpcException(`Error uploading file ${fileName}: ${err}`);
+      throw new RpcException(err);
     }
   }
 
@@ -104,8 +103,7 @@ export class FileProcessorService {
 
       console.log('data deleted from firestore');
     } catch (err) {
-      console.error(err);
-      throw new RpcException(`Error deleteing file ${fileName}: ${err}`);
+      throw new RpcException(err);
     }
   }
 
@@ -179,7 +177,6 @@ export class FileProcessorService {
 
       return { success: true };
     } catch (err) {
-      console.error(err);
       throw new RpcException(
         `Error uploading collection ${collection} for file ${fileName}: ${err}`,
       );

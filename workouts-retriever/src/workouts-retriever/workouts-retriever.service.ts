@@ -20,19 +20,23 @@ export class WorkoutsRetrieverService {
     startTime?: Date,
     endTime?: Date,
   ) {
-    const db = getFirestore();
+    try {
+      const db = getFirestore();
 
-    const workoutRef = db.collection(user).doc(workoutId);
+      const workoutRef = db.collection(user).doc(workoutId);
 
-    const result = await this.getRecordsByRef(
-      workoutRef,
-      values,
-      resolution,
-      startTime,
-      endTime,
-    );
+      const result = await this.getRecordsByRef(
+        workoutRef,
+        values,
+        resolution,
+        startTime,
+        endTime,
+      );
 
-    return result;
+      return result;
+    } catch (err) {
+      throw new RpcException(err);
+    }
   }
 
   async getRecordsByRef(
@@ -76,52 +80,61 @@ export class WorkoutsRetrieverService {
               }
             }, []);
     } catch (err) {
-      console.error(err);
-      throw new RpcException('Getting records failed: ' + err);
+      throw new RpcException(err);
     }
   }
 
   async getLapsFromFirestoreById(user: string, workoutId: string) {
-    const db = getFirestore();
+    try {
+      const db = getFirestore();
+      const workoutRef = db.collection(user).doc(workoutId);
+      const result = await this.getLapsFromFirestoreByRef(workoutRef);
 
-    const workoutRef = db.collection(user).doc(workoutId);
-
-    const result = await this.getLapsFromFirestoreByRef(workoutRef);
-
-    return result;
+      return result;
+    } catch (err) {
+      throw new RpcException(err);
+    }
   }
 
   async getLapsFromFirestoreByRef(workoutRef: DocumentReference<DocumentData>) {
-    const laps = await workoutRef.collection('laps').get();
+    try {
+      const laps = await workoutRef.collection('laps').get();
+      const lapDocs = laps.docs.map((l) => ({
+        ...l.data(),
+        startTime: l.data().startTime.toDate(),
+      }));
 
-    const lapDocs = laps.docs.map((l) => ({
-      ...l.data(),
-      startTime: l.data().startTime.toDate(),
-    }));
-
-    return lapDocs;
+      return lapDocs;
+    } catch (err) {
+      throw new RpcException(err);
+    }
   }
 
   async getSessionById(user: string, workoutId: string): Promise<Session> {
-    const db = getFirestore();
+    try {
+      const db = getFirestore();
+      const workoutRef = db.collection(user).doc(workoutId);
+      const result = await this.getSessionByRef(workoutRef);
 
-    const workoutRef = db.collection(user).doc(workoutId);
-
-    const result = await this.getSessionByRef(workoutRef);
-
-    return result;
+      return result;
+    } catch (err) {
+      throw new RpcException(err);
+    }
   }
 
   async getSessionByRef(
     workoutRef: DocumentReference<DocumentData>,
   ): Promise<Session> {
-    const sessions = await workoutRef.collection('sessions').get();
+    try {
+      const sessions = await workoutRef.collection('sessions').get();
+      const session = sessions.docs.map((d) => ({
+        ...d.data(),
+        startTime: d.data().startTime.toDate(),
+      }))[0];
 
-    const session = sessions.docs.map((d) => ({
-      ...d.data(),
-      startTime: d.data().startTime.toDate(),
-    }))[0];
-
-    return session as Session;
+      return session as Session;
+    } catch (err) {
+      throw new RpcException(err);
+    }
   }
 }

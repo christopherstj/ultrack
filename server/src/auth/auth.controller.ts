@@ -16,24 +16,26 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // @Post('/signup')
-  // async signUp(
-  //   @Body()
-  //   signInDto: {
-  //     email: string;
-  //     password: string;
-  //     firstName: string;
-  //     lastName: string;
-  //   },
-  // ) {
-  //   const result = await this.authService.createUser(
-  //     username,
-  //     password,
-  //     firstName,
-  //     lastName,
-  //   );
-  //   return result;
-  // }
+  @Post('/signup')
+  async signUp(
+    @Body()
+    signInDto: {
+      email: string;
+      password: string;
+      confirmPassword: string;
+      firstName: string;
+      lastName: string;
+    },
+  ) {
+    const result = await this.authService.createUser(
+      signInDto.email,
+      signInDto.password,
+      signInDto.confirmPassword,
+      signInDto.firstName,
+      signInDto.lastName,
+    );
+    return result;
+  }
 
   @Post('login')
   async signIn(@Body() signInDto: { email: string; password: string }) {

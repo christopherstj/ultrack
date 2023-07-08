@@ -31,7 +31,7 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
       useFactory: () => {
         return ClientProxyFactory.create({
           options: {
-            urls: ['amqp://localhost:5672'],
+            urls: [`amqp://${process.env.RABBITMQ_IP || 'localhost'}:5672`],
             queue: 'users_queue',
             queueOptions: {
               durable: false,
