@@ -18,5 +18,5 @@ export class UserFitnessModel {
   thresholdPaceSource?: string;
 
   @Column()
-  units: number;
+  units: string;
 }
