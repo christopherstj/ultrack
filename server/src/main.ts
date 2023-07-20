@@ -36,6 +36,7 @@ const bootstrap = async () => {
     http.createServer(server).listen(80);
     http.createServer(server).listen(443);
   } else {
+    app.enableCors();
     await app.listen(3000);
   }
 };

@@ -7,6 +7,23 @@ import { SuccessMessage } from '@ultrack/libs';
 export class UserFitnessController {
   constructor(private readonly userFitnessService: UserFitnessService) {}
 
+  @MessagePattern('set-units')
+  async setUnits(
+    @Payload() data: { user: string; units: string },
+  ): Promise<SuccessMessage> {
+    const result = await this.userFitnessService.setUserUnits(
+      data.user,
+      data.units,
+    );
+    return result;
+  }
+
+  @MessagePattern('get-units')
+  async getUnits(@Payload() data: { user: string }): Promise<string> {
+    const result = await this.userFitnessService.getUserUnits(data.user);
+    return result;
+  }
+
   @MessagePattern('get-threshold')
   async getUserThresholdPace(
     @Payload() data: { user: string },

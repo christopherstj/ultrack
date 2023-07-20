@@ -16,16 +16,12 @@ export class AuthService {
     email: string,
     password: string,
     confirmPassword: string,
-    firstName: string,
-    lastName: string,
   ): Promise<any> {
     const successMessage: SuccessMessage = await firstValueFrom(
       this.usersServiceClient.send('local/create-user', {
         email,
         password,
         confirmPassword,
-        firstName,
-        lastName,
       }),
     );
     return successMessage;
@@ -49,5 +45,28 @@ export class AuthService {
     return {
       accessToken: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async getLoggedInUser(email: string): Promise<any> {
+    const user = await firstValueFrom(
+      this.usersServiceClient.send('local/find-one', { email }),
+    );
+    const threshold = await firstValueFrom(
+      this.usersServiceClient.send('get-threshold', {
+        user: email,
+      }),
+    );
+    const units = await firstValueFrom(
+      this.usersServiceClient.send('get-units', { user: email }),
+    );
+    const result = {
+      threshold,
+      units,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
+
+    return result;
   }
 }

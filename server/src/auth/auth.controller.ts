@@ -23,16 +23,12 @@ export class AuthController {
       email: string;
       password: string;
       confirmPassword: string;
-      firstName: string;
-      lastName: string;
     },
   ) {
     const result = await this.authService.createUser(
       signInDto.email,
       signInDto.password,
       signInDto.confirmPassword,
-      signInDto.firstName,
-      signInDto.lastName,
     );
     return result;
   }
@@ -49,6 +45,8 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req: AuthorizedRequest) {
-    return req.payload;
+    const email = req.payload!.email;
+    const result = this.authService.getLoggedInUser(email);
+    return result;
   }
 }

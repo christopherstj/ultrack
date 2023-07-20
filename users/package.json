@@ -33,7 +33,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
     "@types/bcryptjs": "^2.4.2",
-    "@ultrack/libs": "^1.0.38",
+    "@ultrack/libs": "^1.0.40",
     "amqp-connection-manager": "^4.1.12",
     "amqplib": "^0.10.3",
     "bcryptjs": "^2.4.3",

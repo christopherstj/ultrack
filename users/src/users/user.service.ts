@@ -17,8 +17,6 @@ export class UserService {
     email: string,
     password: string,
     confirmPassword: string,
-    firstName: string,
-    lastName: string,
   ): Promise<SuccessMessage> {
     const userExists = await this.findLocalUser(email);
 
@@ -44,8 +42,6 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     user.email = email;
-    user.firstName = firstName;
-    user.lastName = lastName;
     user.hashedPassword = hashedPassword;
 
     try {
@@ -53,6 +49,51 @@ export class UserService {
       return {
         success: true,
         msg: 'User created successfully',
+      };
+    } catch (err) {
+      throw new RpcException(err);
+    }
+  }
+  async updateUser(
+    email: string,
+    password?: string,
+    confirmPassword?: string,
+    firstName?: string,
+    lastName?: string,
+  ): Promise<SuccessMessage> {
+    const user = await this.findLocalUser(email);
+
+    if (!user) {
+      return {
+        success: false,
+        msg: 'User does not exist',
+      };
+    }
+
+    if (password && confirmPassword) {
+      const errors = validateNewUser(email, password, confirmPassword);
+      if (errors.length > 0) {
+        return {
+          success: false,
+          msg: 'Invalid input',
+          errorList: errors,
+        };
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      user.email = email;
+      user.hashedPassword = hashedPassword;
+    }
+
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+
+    try {
+      await this.localUserRepo.update({ email }, user);
+      return {
+        success: true,
+        msg: 'User updated successfully',
       };
     } catch (err) {
       throw new RpcException(err);

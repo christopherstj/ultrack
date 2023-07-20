@@ -14,11 +14,28 @@ export class UserController {
       email: string;
       password: string;
       confirmPassword: string;
-      firstName: string;
-      lastName: string;
     },
   ): Promise<SuccessMessage> {
     const result = await this.userService.createUser(
+      data.email,
+      data.password,
+      data.confirmPassword,
+    );
+    return result;
+  }
+
+  @MessagePattern('local/update-user')
+  async updateUserAsync(
+    @Payload()
+    data: {
+      email: string;
+      password?: string;
+      confirmPassword?: string;
+      firstName?: string;
+      lastName?: string;
+    },
+  ): Promise<SuccessMessage> {
+    const result = await this.userService.updateUser(
       data.email,
       data.password,
       data.confirmPassword,

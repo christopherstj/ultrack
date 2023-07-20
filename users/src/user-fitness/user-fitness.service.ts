@@ -13,14 +13,37 @@ export class UserFitnessService {
     private readonly configService: ConfigService,
   ) {}
 
-  async getUserThreshold(email: string): Promise<number> {
-    const user = await this.userFitnessRepo.findOne({
-      where: {
-        userId: email,
-      },
-    });
+  async createUserDetailsIfNotExists(email: string): Promise<void> {
+    try {
+      const userFitness = await this.userFitnessRepo.findOne({
+        where: {
+          userId: email,
+        },
+      });
 
-    return user.thresholdPace;
+      if (!userFitness) {
+        await this.userFitnessRepo.insert({ userId: email });
+        return;
+      } else {
+        return;
+      }
+    } catch (err) {
+      throw new RpcException(err);
+    }
+  }
+
+  async getUserThreshold(email: string): Promise<number> {
+    try {
+      await this.createUserDetailsIfNotExists(email);
+      const user = await this.userFitnessRepo.findOne({
+        where: {
+          userId: email,
+        },
+      });
+      return user.thresholdPace;
+    } catch (err) {
+      throw new RpcException(err);
+    }
   }
 
   async setUserThreshold(
@@ -28,7 +51,7 @@ export class UserFitnessService {
     threshold: number,
   ): Promise<SuccessMessage> {
     try {
-      console.log(threshold);
+      await this.createUserDetailsIfNotExists(email);
       await this.userFitnessRepo.update(
         { userId: email },
         { thresholdPace: threshold },
@@ -36,8 +59,33 @@ export class UserFitnessService {
 
       return { success: true };
     } catch (err) {
-      console.error(err);
-      throw new RpcException('Error updating threshold: ' + err);
+      throw new RpcException(err);
+    }
+  }
+
+  async setUserUnits(email: string, units: string): Promise<SuccessMessage> {
+    try {
+      await this.createUserDetailsIfNotExists(email);
+      await this.userFitnessRepo.update({ userId: email }, { units });
+
+      return { success: true };
+    } catch (err) {
+      throw new RpcException(err);
+    }
+  }
+
+  async getUserUnits(email: string): Promise<string> {
+    try {
+      await this.createUserDetailsIfNotExists(email);
+      const user = await this.userFitnessRepo.findOne({
+        where: {
+          userId: email,
+        },
+      });
+
+      return user.units;
+    } catch (err) {
+      throw new RpcException(err);
     }
   }
 }

@@ -31,7 +31,46 @@ export class UsersController {
     if (response) {
       res.status(200).send(response);
     } else {
-      res.status(500).send('Error setting threshold');
+      res.status(500).send('Error getting threshold');
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('units')
+  async getUnitsAsync(@Req() req: AuthorizedRequest, @Res() res: Response) {
+    const result = this.usersCLient.send<{ units: string }>('get-units', {
+      user: req.payload!.email,
+    });
+    const response = await lastValueFrom(result);
+    if (response) {
+      res.status(200).send(response);
+    } else {
+      res.status(500).send('Error getting units');
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Put()
+  async updateUserAsync(
+    @Body()
+    body: {
+      password?: string;
+      confirmPassword?: string;
+      firstName?: string;
+      lastName?: string;
+    },
+    @Req() req: AuthorizedRequest,
+    @Res() res: Response,
+  ) {
+    const result = this.usersCLient.send<SuccessMessage>('local/update-user', {
+      ...body,
+      email: req.payload!.email,
+    });
+    const message = await lastValueFrom(result);
+    if (message.success) {
+      res.status(200).send(message);
+    } else {
+      res.status(500).send(message);
     }
   }
 
@@ -51,6 +90,25 @@ export class UsersController {
       res.status(200).send(success);
     } else {
       res.status(500).send('Error setting threshold');
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Put('units')
+  async updateUnitsAsync(
+    @Body() body: { units: 'mi' | 'km' },
+    @Req() req: AuthorizedRequest,
+    @Res() res: Response,
+  ) {
+    const result = this.usersCLient.send<SuccessMessage>('set-units', {
+      ...body,
+      user: req.payload!.email,
+    });
+    const success = await lastValueFrom(result);
+    if (success.success) {
+      res.status(200).send(success);
+    } else {
+      res.status(500).send('Error setting units');
     }
   }
 }
